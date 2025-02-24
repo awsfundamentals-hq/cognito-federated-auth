@@ -9,9 +9,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "aws-amplify": "^6.13.1",
     "next": "15.1.7",
+    "oidc-client-ts": "^3.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-oidc-context": "^3.2.0",
     "sst": "3.9.10"
   },
   "devDependencies": {

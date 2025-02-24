@@ -29,6 +29,11 @@ export function createInfra() {
     },
   });
 
+  new aws.cognito.UserPoolDomain('auth-domain', {
+    domain: getEnvOrThrow('COGNITO_USER_POOL_DOMAIN'),
+    userPoolId: userPool.id,
+  });
+
   const idpGoogle = new aws.cognito.IdentityProvider('idp-google', {
     userPoolId: userPool.id,
     providerName: 'Google',
@@ -47,7 +52,10 @@ export function createInfra() {
   const userPoolClient = new aws.cognito.UserPoolClient('user-pool-client', {
     userPoolId: userPool.id,
     generateSecret: false,
-    callbackUrls: ['http://localhost:3000'],
+    callbackUrls: [
+      'http://localhost:3000/auth',
+      'https://federated-auth-pool.auth.eu-west-1.amazoncognito.com/oauth2/idpresponse%20flowName=GeneralOAuthFlow',
+    ],
     allowedOauthFlows: ['code'],
     allowedOauthFlowsUserPoolClient: true,
     allowedOauthScopes: ['email', 'openid', 'profile'],
@@ -56,6 +64,8 @@ export function createInfra() {
 
   new sst.aws.Nextjs('frontend', {
     environment: {
+      NEXT_PUBLIC_AWS_REGION: 'eu-west-1',
+      NEXT_PUBLIC_COGNITO_USER_POOL_DOMAIN: getEnvOrThrow('COGNITO_USER_POOL_DOMAIN'),
       NEXT_PUBLIC_COGNITO_USER_POOL_ID: userPool.id,
       NEXT_PUBLIC_COGNITO_USER_POOL_NAME: userPool.name,
       NEXT_PUBLIC_COGNITO_USER_POOL_CLIENT_ID: userPoolClient.id,
