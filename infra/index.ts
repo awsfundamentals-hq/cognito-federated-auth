@@ -29,7 +29,7 @@ export function createInfra() {
     },
   });
 
-  new aws.cognito.UserPoolDomain('auth-domain', {
+  new aws.cognito.UserPoolDomain('user-pool-domain', {
     domain: getEnvOrThrow('COGNITO_USER_POOL_DOMAIN'),
     userPoolId: userPool.id,
   });
@@ -49,16 +49,11 @@ export function createInfra() {
     },
   });
 
-  const idpPoolDomain = getEnvOrThrow('COGNITO_USER_POOL_DOMAIN');
-
   const userPoolClient = new aws.cognito.UserPoolClient('user-pool-client', {
     userPoolId: userPool.id,
     generateSecret: false,
-    callbackUrls: [
-      'http://localhost:3000/auth',
-      `https://${idpPoolDomain}.auth.eu-west-1.amazoncognito.com/oauth2/idpresponse%20flowName=GeneralOAuthFlow`,
-    ],
-    logoutUrls: ['http://localhost:3000/logout'], // Add logout URLs if needed
+    callbackUrls: ['http://localhost:3000/auth'],
+    logoutUrls: ['http://localhost:3000/logout'],
     allowedOauthFlows: ['code'],
     allowedOauthFlowsUserPoolClient: true,
     allowedOauthScopes: ['email', 'openid', 'profile'],
@@ -70,13 +65,8 @@ export function createInfra() {
     preventUserExistenceErrors: 'ENABLED',
   });
 
-  new aws.cognito.UserPoolDomain('user-pool-domain', {
-    domain: idpPoolDomain,
-    userPoolId: userPool.id,
-  });
-
   const idpConfig = {
-    authority: $interpolate`https://cognito-idp.eu-west-1.amazonaws.com/${userPool.id}`,
+    authority: $interpolate`https://cognito-idp.${getEnvOrThrow('AWS_REGION')}.amazonaws.com/${userPool.id}`,
     client_id: userPoolClient.id,
     redirect_uri: 'http://localhost:3000/auth',
     response_type: 'code',
