@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Amazon Cognito Federated Authentication Demo
+
+This project demonstrates how to implement federated authentication with Amazon Cognito and Google OAuth using Next.js and SST (Serverless Stack) v3.
 
 ## Getting Started
 
-First, run the development server:
+To run this application, follow these steps:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Ensure you have Node.js installed on your system.
+2. Clone this repository to your local machine.
+3. Install the dependencies by running `pnpm i` in the project root directory.
+4. Create a `.env` file in the root directory with the following variables:
+   ```
+   COGNITO_USER_POOL_DOMAIN=your-domain-prefix
+   GOOGLE_OAUTH_CLIENT_ID=your-google-client-id
+   GOOGLE_OAUTH_CLIENT_SECRET=your-google-client-secret
+   ```
+5. Start the development server by running:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```
+   npx sst dev
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This command will deploy the application to your AWS account and start the local development environment.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## About the Project
+
+This application is built using SST v3, which provides a powerful framework for building serverless applications on AWS.
+
+It showcases a simple authentication flow that uses Amazon Cognito as the identity provider with Google OAuth integration. The app allows users to:
+
+- Sign in with their Google account
+- View their authentication details
+- Sign out
+
+## Project Structure
+
+- `sst.config.ts`: SST configuration file
+- `infra/index.ts`: Infrastructure setup with AWS Cognito resources
+- `app/page.tsx`: Main Next.js page for the frontend
+- `app/auth/page.tsx`: Authentication callback page
+- `app/components/GoogleSignInButton.tsx`: Component for Google sign-in functionality
+- `app/components/AuthProviderWrapper.tsx`: OIDC authentication provider wrapper
+- `app/lib/types.ts`: TypeScript type definitions
+- `app/lib/utils.ts`: Utility functions
+
+## AWS Resources
+
+This project sets up the following AWS resources:
+
+- Amazon Cognito User Pool: Manages user authentication and identity
+- Cognito User Pool Domain: Provides a hosted UI for authentication
+- Cognito Identity Provider: Configures Google as a federated identity provider
+- Cognito User Pool Client: Configures the application client for authentication
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+To learn more about the technologies used in this project:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [SST documentation](https://docs.sst.dev/)
+- [Amazon Cognito documentation](https://docs.aws.amazon.com/cognito/)
+- [Next.js documentation](https://nextjs.org/docs)
+- [React OIDC Context](https://github.com/authts/react-oidc-context)
