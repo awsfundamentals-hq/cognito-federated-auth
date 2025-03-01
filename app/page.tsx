@@ -3,12 +3,12 @@ import { GoogleSignInButton } from './components/GoogleSignInButton';
 import { getOrThrow } from './lib/utils';
 
 export default function Home() {
-  const clientId = getOrThrow('NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID');
   const userPoolId = getOrThrow('NEXT_PUBLIC_COGNITO_USER_POOL_ID');
-  const userPoolClientId = getOrThrow('NEXT_PUBLIC_COGNITO_USER_POOL_CLIENT_ID');
-  const userPoolName = getOrThrow('NEXT_PUBLIC_COGNITO_USER_POOL_NAME');
-  const awsRegion = getOrThrow('NEXT_PUBLIC_AWS_REGION');
-  const userPoolDomain = getOrThrow('NEXT_PUBLIC_COGNITO_USER_POOL_DOMAIN');
+  const authority = getOrThrow('NEXT_PUBLIC_AUTHORITY');
+  const client_id = getOrThrow('NEXT_PUBLIC_CLIENT_ID');
+  const redirect_uri = getOrThrow('NEXT_PUBLIC_REDIRECT_URI');
+  const response_type = getOrThrow('NEXT_PUBLIC_RESPONSE_TYPE');
+  const scope = getOrThrow('NEXT_PUBLIC_SCOPE');
   return (
     <div className="flex flex-col items-center">
       <nav className="w-full flex items-center justify-between py-4 px-8 bg-[#242E41]">
@@ -33,30 +33,29 @@ export default function Home() {
         </a>
       </nav>
       <div className="flex flex-col items-center justify-center min-h-[60vh] w-full max-w-5xl mx-auto p-8 space-y-8">
-        <GoogleSignInButton
-          userPoolId={userPoolId}
-          userPoolClientId={userPoolClientId}
-          awsRegion={awsRegion}
-          userPoolDomain={userPoolDomain}
-        />
+        <GoogleSignInButton />
         <div className="bg-white p-4 rounded-lg shadow-md max-w-2xl mt-8">
           <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">Cognito Pool Details</h3>
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between gap-8">
-              <span className="text-gray-600">Client ID:</span>
-              <code className="text-gray-800">{(clientId as string).split('.')[0]}</code>
-            </div>
             <div className="flex justify-between gap-8">
               <span className="text-gray-600">User Pool ID:</span>
               <code className="text-gray-800">{userPoolId}</code>
             </div>
             <div className="flex justify-between gap-8">
-              <span className="text-gray-600">User Pool Client ID:</span>
-              <code className="text-gray-800">{userPoolClientId}</code>
+              <span className="text-gray-600">Authority:</span>
+              <code className="text-gray-800">{authority}</code>
             </div>
             <div className="flex justify-between gap-8">
-              <span className="text-gray-600">User Pool Name:</span>
-              <code className="text-gray-800">{userPoolName}</code>
+              <span className="text-gray-600">Client ID:</span>
+              <code className="text-gray-800">{client_id}</code>
+            </div>
+            <div className="flex justify-between gap-8">
+              <span className="text-gray-600">Redirect URI:</span>
+              <code className="text-gray-800">{redirect_uri}</code>
+            </div>
+            <div className="flex justify-between gap-8">
+              <span className="text-gray-600">Response Type:</span>
+              <code className="text-gray-800">{response_type}</code>
             </div>
           </div>
         </div>

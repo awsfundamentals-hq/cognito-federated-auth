@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { AuthProviderWrapper } from './components/AuthProviderWrapper';
 import './globals.css';
+import { AuthConfig } from './lib/types';
 
 export const metadata: Metadata = {
   title: 'Amazon Cognito Federated Authentication',
@@ -12,12 +13,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cognitoAuthConfig = {
-    authority: `https://cognito-idp.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID}`,
-    client_id: process.env.NEXT_PUBLIC_COGNITO_USER_POOL_CLIENT_ID!,
-    redirect_uri: 'http://localhost:3000/auth',
-    response_type: 'code',
-    scope: 'email openid profile',
+  const cognitoAuthConfig: AuthConfig = {
+    authority: process.env.NEXT_PUBLIC_AUTHORITY!,
+    client_id: process.env.NEXT_PUBLIC_CLIENT_ID!,
+    redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI!,
+    response_type: process.env.NEXT_PUBLIC_RESPONSE_TYPE!,
+    scope: process.env.NEXT_PUBLIC_SCOPE!,
   };
 
   return (

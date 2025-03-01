@@ -1,15 +1,8 @@
 'use client';
 
-import { AuthProvider } from 'react-oidc-context';
 import { WebStorageStateStore } from 'oidc-client-ts';
-
-type AuthConfig = {
-  authority: string;
-  client_id: string;
-  redirect_uri: string;
-  response_type: string;
-  scope: string;
-};
+import { AuthProvider } from 'react-oidc-context';
+import { AuthConfig } from '../lib/types';
 
 export function AuthProviderWrapper({ children, config }: { children: React.ReactNode; config: AuthConfig }) {
   const oidcConfig = {
