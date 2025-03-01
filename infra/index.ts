@@ -49,37 +49,29 @@ export function createInfra() {
     },
   });
 
+  const oAuthScopes = ['email', 'openid', 'profile'];
+  const oAuthFlow = 'code';
   const userPoolClient = new aws.cognito.UserPoolClient('user-pool-client', {
     userPoolId: userPool.id,
     generateSecret: false,
-    callbackUrls: ['http://localhost:3000/auth'],
-    logoutUrls: ['http://localhost:3000/logout'],
-    allowedOauthFlows: ['code'],
+    callbackUrls: [getEnvOrThrow('COGNITO_CALLBACK_URL')],
+    logoutUrls: [getEnvOrThrow('COGNITO_LOGOUT_URL')],
+    allowedOauthFlows: [oAuthFlow],
     allowedOauthFlowsUserPoolClient: true,
-    allowedOauthScopes: ['email', 'openid', 'profile'],
+    allowedOauthScopes: oAuthScopes,
     supportedIdentityProviders: [idpGoogle.providerName],
-
-    // Enable the hosted UI
     enableTokenRevocation: true,
     explicitAuthFlows: ['ALLOW_USER_SRP_AUTH', 'ALLOW_REFRESH_TOKEN_AUTH', 'ALLOW_USER_PASSWORD_AUTH'],
     preventUserExistenceErrors: 'ENABLED',
   });
 
-  const idpConfig = {
-    authority: $interpolate`https://cognito-idp.${getEnvOrThrow('AWS_REGION')}.amazonaws.com/${userPool.id}`,
-    client_id: userPoolClient.id,
-    redirect_uri: 'http://localhost:3000/auth',
-    response_type: 'code',
-    scope: 'email openid profile',
-  };
-
   new sst.aws.Nextjs('frontend', {
     environment: {
-      NEXT_PUBLIC_AUTHORITY: idpConfig.authority,
-      NEXT_PUBLIC_CLIENT_ID: idpConfig.client_id,
-      NEXT_PUBLIC_REDIRECT_URI: idpConfig.redirect_uri,
-      NEXT_PUBLIC_RESPONSE_TYPE: idpConfig.response_type,
-      NEXT_PUBLIC_SCOPE: idpConfig.scope,
+      NEXT_PUBLIC_AUTHORITY: $interpolate`https://cognito-idp.${getEnvOrThrow('AWS_REGION')}.amazonaws.com/${userPool.id}`,
+      NEXT_PUBLIC_CLIENT_ID: userPoolClient.id,
+      NEXT_PUBLIC_REDIRECT_URI: getEnvOrThrow('COGNITO_REDIRECT_URI'),
+      NEXT_PUBLIC_RESPONSE_TYPE: oAuthFlow,
+      NEXT_PUBLIC_SCOPE: oAuthScopes.join(' '),
       NEXT_PUBLIC_COGNITO_USER_POOL_ID: userPool.id,
     },
   });
