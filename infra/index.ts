@@ -4,7 +4,7 @@
 const getEnvOrThrow = (key: string) => {
   const value = process.env[key];
   if (!value) {
-    throw new Error(`Environment variable ${key} is not set.`);
+    throw new Error(`Please set the environment variable for ${key}.`);
   }
   return value;
 };
@@ -49,7 +49,6 @@ export function createInfra() {
     },
   });
 
-  // TODO: from the Cognito console: let's create this via IaC
   const idpPoolDomain = getEnvOrThrow('COGNITO_USER_POOL_DOMAIN');
 
   const userPoolClient = new aws.cognito.UserPoolClient('user-pool-client', {
@@ -59,10 +58,21 @@ export function createInfra() {
       'http://localhost:3000/auth',
       `https://${idpPoolDomain}.auth.eu-west-1.amazoncognito.com/oauth2/idpresponse%20flowName=GeneralOAuthFlow`,
     ],
+    logoutUrls: ['http://localhost:3000/logout'], // Add logout URLs if needed
     allowedOauthFlows: ['code'],
     allowedOauthFlowsUserPoolClient: true,
     allowedOauthScopes: ['email', 'openid', 'profile'],
     supportedIdentityProviders: [idpGoogle.providerName],
+
+    // Enable the hosted UI
+    enableTokenRevocation: true,
+    explicitAuthFlows: ['ALLOW_USER_SRP_AUTH', 'ALLOW_REFRESH_TOKEN_AUTH', 'ALLOW_USER_PASSWORD_AUTH'],
+    preventUserExistenceErrors: 'ENABLED',
+  });
+
+  new aws.cognito.UserPoolDomain('user-pool-domain', {
+    domain: idpPoolDomain,
+    userPoolId: userPool.id,
   });
 
   const idpConfig = {
